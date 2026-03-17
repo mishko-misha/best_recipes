@@ -1,0 +1,10 @@
+<html lang="">
+<h1>Profile</h1>
+<p> Name: {{ user.first_name }}</p>
+<p> Last name: {{ user.last_name }}</p>
+<p>Email: {{user.email}}</p>
+<form action="/logout/" method="post">
+    {% csrf_token %}
+    <button type="submit">Logout</button>
+</form>
+</html>
