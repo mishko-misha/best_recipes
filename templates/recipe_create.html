@@ -15,5 +15,11 @@
     {{ form }}
     <button type="submit">Create recipe</button>
 </form>
+
+<form action="recipes/create/ingredient/" method="post">
+    {% csrf_token %}
+    {{ ingredient_form }}
+    <button type="submit">Add ingredient</button>
+</form>
 </body>
 </html>

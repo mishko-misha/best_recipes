@@ -19,8 +19,9 @@ class LoginForm(Form):
 
 class RecipeForm(Form):
     title = CharField(max_length=150)
-    description = CharField(max_length=150)
+    description = CharField(max_length=500)
     cooking_time = CharField(max_length=150)
     
-class IngredientForm(Form):
+class RecipeIngredientForm(Form):
     name = CharField(max_length=150)
+    amount = CharField(max_length=150)
