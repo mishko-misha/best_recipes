@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recipe detail</title>
+</head>
+<body>
+    <div class="container">
+        <h1>{{ recipe.title }}</h1>
+        <p><strong>Cooking time:</strong> {{ recipe.cooking_time }} minutes</p>
+        <p><strong>Author:</strong> {{ recipe.author.username }}</p>
+        <h2>Ingredients</h2>
+        <ul>
+            {% for recipe in recipe.ingredients.all %}
+                <li>{{ recipe.ingredient.name }}: {{ recipe.amount }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+</body>

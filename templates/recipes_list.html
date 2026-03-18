@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recipes</title>
+</head>
+<body>
+    <div class="container">
+        <h1>Recipes List</h1>
+
+        {% if recipes %}
+            {% for recipe in recipes %}
+                <div class="recipe-card">
+                    {{ recipe.title}} (cooking time:{{ recipe.cooking_time }} minutes, author: {{ recipe.author.username }}) - <a href="{% url 'recipe_detail' recipe.id%}">Details</a>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty-message">
+                No recipes available yet.
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>

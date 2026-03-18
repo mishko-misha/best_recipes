@@ -1,0 +1,19 @@
+<html lang="en">
+<head>
+    <title>Create recipe</title>
+    <style>
+        form { max-width: 420px; margin: 24px auto; }
+        .form-row label { width: 120px; margin-right: 12px; text-align: right; }
+        .form-row input { flex: 1; padding: 6px 8px; }
+        .form-row button { margin-left: 132px; padding: 8px 12px; }
+    </style>
+</head>
+<body>
+<h2>Recipe</h2>
+<form action="/recipes/create/" method="post">
+    {% csrf_token %}
+    {{ form }}
+    <button type="submit">Create recipe</button>
+</form>
+</body>
+</html>

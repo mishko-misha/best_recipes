@@ -22,7 +22,7 @@ class Recipes(models.Model):
         return f"{self.title} - {self.description} - {self.cooking_time} - {self.author.username}"
 
 class RecipeIngredients(models.Model):
-    recipe = models.ForeignKey(Recipes, on_delete=models.CASCADE)
+    recipe = models.ForeignKey(Recipes, on_delete=models.CASCADE,related_name="ingredients")
     ingredient = models.ForeignKey(Ingredients, on_delete=models.CASCADE)
     amount = models.CharField(max_length=100)
 

@@ -16,3 +16,11 @@ class RegisterForm(UserCreationForm):
 class LoginForm(Form):
     login = CharField(max_length=150)
     password = CharField(max_length=150, widget=PasswordInput)
+
+class RecipeForm(Form):
+    title = CharField(max_length=150)
+    description = CharField(max_length=150)
+    cooking_time = CharField(max_length=150)
+    
+class IngredientForm(Form):
+    name = CharField(max_length=150)
