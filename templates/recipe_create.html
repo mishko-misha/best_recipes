@@ -1,25 +1,42 @@
-<html lang="en">
-<head>
-    <title>Create recipe</title>
-    <style>
-        form { max-width: 420px; margin: 24px auto; }
-        .form-row label { width: 120px; margin-right: 12px; text-align: right; }
-        .form-row input { flex: 1; padding: 6px 8px; }
-        .form-row button { margin-left: 132px; padding: 8px 12px; }
-    </style>
-</head>
-<body>
-<h2>Recipe</h2>
+<h2>Create recipe</h2>
+
 <form action="/recipes/create/" method="post">
     {% csrf_token %}
-    {{ form }}
-    <button type="submit">Create recipe</button>
+    {% for field in form %}
+    <div class="form-row">
+        {{ field.label_tag }}
+        {{ field }}
+        {{ field.errors }}
+    </div>
+    {% endfor %}
+    <hr>
+    <h3>Ingredients</h3>
+
+    <div id="ingredients">
+        <div class="form-row ingredient-row">
+            <input type="text" name="ingredient_name[]" placeholder="Name">
+            <input type="text" name="ingredient_amount[]" placeholder="Amount">
+            <button type="button" onclick="addIngredient()">+</button>
+        </div>
+    </div>
+    <div class="form-row">
+        <button type="submit">Save</button>
+    </div>
 </form>
 
-<form action="recipes/create/ingredient/" method="post">
-    {% csrf_token %}
-    {{ ingredient_form }}
-    <button type="submit">Add ingredient</button>
-</form>
-</body>
-</html>
+<script>
+function addIngredient() {
+    const container = document.getElementById('ingredients');
+
+    const row = document.createElement('div');
+    row.className = 'form-row ingredient-row';
+
+    row.innerHTML = `
+        <input type="text" name="ingredient_name[]" placeholder="Name">
+        <input type="text" name="ingredient_amount[]" placeholder="Amount">
+        <button type="button" onclick="this.parentElement.remove()">-</button>
+    `;
+
+    container.appendChild(row);
+}
+</script>

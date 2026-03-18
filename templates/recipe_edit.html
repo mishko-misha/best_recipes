@@ -1,0 +1,31 @@
+<h2>Update recipe</h2>
+
+<form action="recipes/{{ recipe.id }}/update/" method="post">
+    {% csrf_token %}
+    {% for field in form %}
+    <div class="form-row">
+        {{ field.label_tag }}
+        {{ field }}
+        {{ field.errors }}
+    </div>
+    {% endfor %}
+    <hr>
+    <h3>Ingredients</h3>
+
+    <div id="ingredients">
+        {% for row in ingredient_rows %}
+    <div class="ingredient-row">
+        <input type="text" name="ingredient_name[]" value="{{ row.ingredient_name }}">
+        <input type="text" name="ingredient_amount[]" value="{{ row.ingredient_amount }}">
+    </div>
+{% empty %}
+    <div class="ingredient-row">
+        <input type="text" name="ingredient_name[]" value="">
+        <input type="text" name="ingredient_amount[]" value="">
+    </div>
+{% endfor %}
+    </div>
+    <div class="form-row">
+        <button type="submit">Save</button>
+    </div>
+</form>

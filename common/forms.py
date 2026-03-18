@@ -1,6 +1,8 @@
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from django.forms import Form, CharField, PasswordInput
+from django.forms import Form, CharField, PasswordInput, ModelForm
+
+from recipes.models import Recipes
 
 
 class RegisterForm(UserCreationForm):
@@ -17,11 +19,11 @@ class LoginForm(Form):
     login = CharField(max_length=150)
     password = CharField(max_length=150, widget=PasswordInput)
 
-class RecipeForm(Form):
-    title = CharField(max_length=150)
-    description = CharField(max_length=500)
-    cooking_time = CharField(max_length=150)
+class RecipeForm(ModelForm):
+    class Meta:
+        model = Recipes
+        fields  = ["title", "description", "cooking_time"]
     
-class RecipeIngredientForm(Form):
+class RecipeIngredientsForm(Form):
     name = CharField(max_length=150)
     amount = CharField(max_length=150)

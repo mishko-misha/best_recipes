@@ -1,11 +1,11 @@
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.utils.decorators import method_decorator
 from django.views import View
 
-from common.forms import RecipeForm, RecipeIngredientForm
-from recipes.models import Recipes, Ingredients
+from common.forms import RecipeForm, RecipeIngredientsForm
+from recipes.models import Recipes, Ingredients, RecipeIngredients
 
 
 class RecipeListView(View):
@@ -29,38 +29,78 @@ class RecipeDetailView(View):
 @method_decorator(login_required, name='dispatch')
 class RecipeCreateView(View):
     template_name = "recipe_create.html"
+    recipe_class = RecipeForm
+    recipe_ingredient_form = RecipeIngredientsForm
 
     def get(self, request):
-        create_form = RecipeForm()
-        return render(request, self.template_name, context={"form": create_form}, )
+        create_form = self.recipe_class()
+        ingredient_form = self.recipe_ingredient_form()
+        return render(request, self.template_name, context={"form": create_form, "ingredient_form": ingredient_form}, )
 
     def post(self, request):
-        create_form = self.form_class(request.POST)
+        create_form = self.recipe_class(request.POST)
+        ingredient_form = self.recipe_ingredient_form(request.POST)
         if create_form.is_valid():
             recipe = Recipes.objects.create(author=request.user, **create_form.cleaned_data)
-            recipe.save()
-        return render(request, self.template_name, context={"form": create_form}, )
+
+            # Save all ingredients sent as ingredient_name[] / ingredient_amount[]
+            names = request.POST.getlist('ingredient_name[]')
+            amounts = request.POST.getlist('ingredient_amount[]')
+            for name, amount in zip(names, amounts):
+                name = name.strip()
+                amount = amount.strip()
+                if name:
+                    ingredient, _ = Ingredients.objects.get_or_create(name=name)
+                    RecipeIngredients.objects.create(
+                        recipe=recipe,
+                        ingredient=ingredient,
+                        amount=amount,
+                    )
+
+            return redirect('recipe_detail', recipe_id=recipe.id)
+
+        return render(request, self.template_name, context={"form": create_form, "ingredient_form": ingredient_form}, )
+
 
 @method_decorator(login_required, name='dispatch')
-class RecipeCreateIngredientView(View):
-    template_name = "recipe_create_ingredient.html"
-    
-    def get(self, request):
-        ingredient_form = RecipeIngredientForm()
-        return render(request, self.template_name, context={"ingredient_form": ingredient_form}, )
-
-    def post(self, request):
-        ingredient_form = self.form_class(request.POST)
-        if ingredient_form.is_valid():
-            ingredient = Ingredients.objects.create(**ingredient_form.cleaned_data)
-            ingredient.save()
-        return render(request, self.template_name, context={"ingredient_form": ingredient_form}, )
-
 class RecipeUpdateView(View):
-    def get(self, request, id):
-        return HttpResponse(f"Recipe update {id}")
+    template_name = "recipe_edit.html"
+    recipe_class = RecipeForm
+    recipe_ingredient_form = RecipeIngredientsForm
+
+    def get(self, request, recipe_id):
+        recipe = Recipes.objects.get(id=recipe_id)
+        update_form = self.recipe_class(instance=recipe)
+        recipe_ingredients = RecipeIngredients.objects.filter(recipe=recipe).select_related("ingredient").order_by("id")
+
+        ingredient_rows = [
+            {
+                "ingredient_name": recipe_ingredients.ingredient.name,
+                "ingredient_amount": recipe_ingredients.amount
+            }
+            for recipe_ingredients in recipe_ingredients
+        ]
+
+        ingredient_form = self.recipe_ingredient_form()
+
+        return render(
+            request,
+            self.template_name,
+            context={"form": update_form, "recipe": recipe, "ingredient_form": ingredient_form,
+                     "recipe_ingredients": recipe_ingredients, "ingredient_rows": ingredient_rows}, )
+
+    # def post(self, request, recipe_id):
+    #     recipe = Recipes.objects.get(id=recipe_id)
+    #     update_form = self.recipe_class(request.POST, instance=recipe)
+    #     if update_form.is_valid():
+    #         ingredient_form = update_form.save(commit=False)
+    #         ingredient_form.recipe = recipe
+    #         ingredient_form.save()
+    #         return redirect('recipe_detail', recipe_id=recipe.id)
+    #     return render(request, self.template_name, context={"form": update_form, "recipe": recipe}, )
 
 
+@method_decorator(login_required, name='dispatch')
 class RecipeDeleteView(View):
     def get(self, request, id):
         return HttpResponse(f"Recipe delete {id}")
