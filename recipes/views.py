@@ -89,18 +89,70 @@ class RecipeUpdateView(View):
             context={"form": update_form, "recipe": recipe, "ingredient_form": ingredient_form,
                      "recipe_ingredients": recipe_ingredients, "ingredient_rows": ingredient_rows}, )
 
-    # def post(self, request, recipe_id):
-    #     recipe = Recipes.objects.get(id=recipe_id)
-    #     update_form = self.recipe_class(request.POST, instance=recipe)
-    #     if update_form.is_valid():
-    #         ingredient_form = update_form.save(commit=False)
-    #         ingredient_form.recipe = recipe
-    #         ingredient_form.save()
-    #         return redirect('recipe_detail', recipe_id=recipe.id)
-    #     return render(request, self.template_name, context={"form": update_form, "recipe": recipe}, )
+    def post(self, request, recipe_id):
+        recipe = Recipes.objects.get(id=recipe_id)
+        update_form = self.recipe_class(request.POST, instance=recipe)
 
+        if update_form.is_valid():
+            recipe = update_form.save()
+
+            names = request.POST.getlist('ingredient_name[]')
+            amounts = request.POST.getlist('ingredient_amount[]')
+
+            # use clears fields as name, amount and when click save, it will delete ingredients
+            RecipeIngredients.objects.filter(recipe=recipe).delete()
+
+            for name, amount in zip(names, amounts):
+                name = name.strip()
+                amount = amount.strip()
+                if name and amount:
+                    ingredient, _ = Ingredients.objects.get_or_create(name=name)
+                    RecipeIngredients.objects.create(
+                        recipe=recipe,
+                        ingredient=ingredient,
+                        amount=amount
+                    )
+
+            return redirect('recipe_detail', recipe_id=recipe.id)
+
+        #Collect all  ingredients which related to recipe
+        recipe_ingredients = (
+            RecipeIngredients.objects
+            .filter(recipe=recipe)
+            .select_related("ingredient")
+            .order_by("id")
+        )
+
+        ingredient_rows = [
+            {
+                "ingredient_name": ri.ingredient.name,
+                "ingredient_amount": ri.amount
+            }
+            for ri in recipe_ingredients
+        ]
+
+        return render(
+            request,
+            self.template_name,
+            context={
+                "form": update_form,
+                "recipe": recipe,
+                "recipe_ingredients": recipe_ingredients,
+                "ingredient_rows": ingredient_rows
+            },
+        )
 
 @method_decorator(login_required, name='dispatch')
 class RecipeDeleteView(View):
-    def get(self, request, id):
-        return HttpResponse(f"Recipe delete {id}")
+    def get(self, request, recipe_id):
+        recipe = Recipes.objects.get(id=recipe_id)
+        return render(request, "recipe_delete", {"recipe": recipe})
+
+    def post(self, request, recipe_id):
+        recipe = Recipes.objects.get(id=recipe_id)
+
+        RecipeIngredients.objects.filter(recipe=recipe).delete()
+
+        recipe.delete()
+
+        return redirect('recipes_list')

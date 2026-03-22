@@ -8,6 +8,7 @@
 <body>
     <div class="container">
         <h1>{{ recipe.title }}</h1>
+        <p><strong>Description:</strong> {{ recipe.description }}</p>
         <p><strong>Cooking time:</strong> {{ recipe.cooking_time }} minutes</p>
         <p><strong>Author:</strong> {{ recipe.author.username }}</p>
         <h2>Ingredients</h2>
@@ -16,5 +17,8 @@
                 <li>{{ recipe.ingredient.name }}: {{ recipe.amount }}</li>
             {% endfor %}
         </ul>
+        <button type="button" onclick="window.location.href='/recipes/{{ recipe.id }}/update/'">Update</button>
+        <button type="button" onclick="window.location.href='/recipes/{{ recipe.id }}/delete/'">Delete</button>
+        <button type="button" onclick="window.location.href='/recipes/'">Back to list</button>
     </div>
 </body>
