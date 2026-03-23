@@ -9,6 +9,11 @@
     <div class="container">
         <h1>Recipes List</h1>
 
+        <form action="/recipes/" method="get">
+    <input type="text" name="name" placeholder="Search recipe">
+    <button type="submit">Search</button>
+</form><br>
+
         {% if recipes %}
             {% for recipe in recipes %}
                 <div class="recipe-card">
@@ -20,6 +25,10 @@
                 No recipes available yet.
             </div>
         {% endif %}
-    </div>
+    </div><br>
+    <form action="/recipes/create/" method="post">
+    {% csrf_token %}
+    <button type="submit">Create recipe</button>
+    </form>
 </body>
 </html>

@@ -1,5 +1,4 @@
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.utils.decorators import method_decorator
 from django.views import View
@@ -12,10 +11,26 @@ class RecipeListView(View):
     template_name = "recipes_list.html"
 
     def get(self, request):
-        list_form = RecipeForm()
-        recipes = Recipes.objects.all()
-        return render(request, self.template_name, context={"form": list_form, "recipes": recipes}, )
+        query = request.GET.get('name', '')
 
+        recipes = Recipes.objects.all()
+
+        if query:
+            recipe_name = Recipes.objects.filter(title__icontains=query)
+            ingredient_name = Recipes.objects.filter(
+                ingredients__ingredient__name__icontains=query
+            )
+
+            recipes = (recipe_name | ingredient_name).distinct()
+
+        return render(
+            request,
+            self.template_name,
+            {
+                "recipes": recipes,
+                "query": query
+            }
+        )
 
 class RecipeDetailView(View):
     template_name = "recipe_detail.html"
@@ -24,7 +39,6 @@ class RecipeDetailView(View):
         list_form = RecipeForm()
         recipe = Recipes.objects.get(id=recipe_id)
         return render(request, self.template_name, context={"form": list_form, "recipe": recipe}, )
-
 
 @method_decorator(login_required, name='dispatch')
 class RecipeCreateView(View):
@@ -115,7 +129,7 @@ class RecipeUpdateView(View):
 
             return redirect('recipe_detail', recipe_id=recipe.id)
 
-        #Collect all  ingredients which related to recipe
+        # Collect all  ingredients which related to recipe
         recipe_ingredients = (
             RecipeIngredients.objects
             .filter(recipe=recipe)
@@ -141,6 +155,7 @@ class RecipeUpdateView(View):
                 "ingredient_rows": ingredient_rows
             },
         )
+
 
 @method_decorator(login_required, name='dispatch')
 class RecipeDeleteView(View):

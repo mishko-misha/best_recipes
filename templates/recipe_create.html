@@ -18,10 +18,11 @@
             <input type="text" name="ingredient_amount[]" placeholder="Amount">
             <button type="button" onclick="addIngredient()">+</button>
         </div>
-    </div>
+    </div><br>
     <div class="form-row">
         <button type="submit">Save</button>
-    </div>
+        <button type="button" onclick="window.location.href='{{ '/recipes/' }}'"> Back to the list of recipes</button>
+        </div><br>
 </form>
 
 <script>

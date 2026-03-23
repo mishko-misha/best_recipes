@@ -1,3 +1,5 @@
+from urllib import request
+
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -59,4 +61,3 @@ class UserView(View):
     def get(self, request, user_id):
         user = User.objects.get(id=user_id)
         return render(request, self.template_name, {'user': user})
-
