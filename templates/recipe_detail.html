@@ -17,6 +17,25 @@
                 <li>{{ recipe.ingredient.name }}: {{ recipe.amount }}</li>
             {% endfor %}
         </ul>
+    {% if user.is_authenticated %}
+        <form method="post">
+        {% csrf_token %}
+
+        <select name="rating">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+        </select>
+
+        <button type="submit">Leave rating</button>
+        </form><br>
+    {% else %}
+<p>
+        <p>If you want to leave a rating: <button type="button" onclick="window.location.href='/login/'">Log in</button> </p>
+</p>
+{% endif %}
         <button type="button" onclick="window.location.href='/recipes/{{ recipe.id }}/update/'">Update</button>
         <button type="button" onclick="window.location.href='/recipes/{{ recipe.id }}/delete/'">Delete</button>
         <button type="button" onclick="window.location.href='/recipes/'">Back to list</button>

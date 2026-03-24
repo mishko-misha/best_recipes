@@ -27,3 +27,4 @@ class RecipeForm(ModelForm):
 class RecipeIngredientsForm(Form):
     name = CharField(max_length=150)
     amount = CharField(max_length=150)
+
