@@ -19,7 +19,11 @@ class RecipeListView(View):
 
         if query:
             recipe_name = Recipes.objects.filter(title__icontains=query)
-            recipes = recipe_name.distinct().annotate(avg_rating=Avg('ratings__rating'))
+            ingredient_name = Recipes.objects.filter(
+                ingredients__ingredient__name__icontains=query
+            )
+
+            recipes = (recipe_name | ingredient_name).distinct().annotate(avg_rating=Avg('ratings__rating'))
 
         return render(
             request,
