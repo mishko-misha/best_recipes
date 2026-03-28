@@ -8,6 +8,7 @@ from django.utils.decorators import method_decorator
 from django.views import View
 
 from common.forms import LoginForm, RegisterForm
+from recipes.models import Bookmark
 
 
 class LoginView(View):
@@ -26,7 +27,7 @@ class LoginView(View):
                 auth.login(request, user)
                 return redirect("user_view", user_id=user.id)
             else:
-                return render(request, self.template_name, {'form': user_login,'error': 'Invalid login or password'})
+                return render(request, self.template_name, {'form': user_login, 'error': 'Invalid login or password'})
         else:
             return render(request, self.template_name, {'form': user_login})
 
@@ -54,10 +55,15 @@ class LogoutView(View):
         auth.logout(request)
         return redirect("login")
 
+
 @method_decorator(login_required, name='dispatch')
 class UserView(View):
     template_name = 'user_page.html'
 
     def get(self, request, user_id):
         user = User.objects.get(id=user_id)
-        return render(request, self.template_name, {'user': user})
+
+        bookmarks = (
+            Bookmark.objects.filter(user=user).select_related('recipe')
+        )
+        return render(request, self.template_name, {'user': user, 'bookmarks': bookmarks})

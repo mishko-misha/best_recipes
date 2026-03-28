@@ -3,11 +3,11 @@
 <form action="/recipes/create/" method="post">
     {% csrf_token %}
     {% for field in form %}
-    <div class="form-row">
-        {{ field.label_tag }}
-        {{ field }}
-        {{ field.errors }}
-    </div>
+        <div class="form-row">
+            {{ field.label_tag }}
+            {{ field }}
+            {{ field.errors }}
+        </div>
     {% endfor %}
     <hr>
     <h3>Ingredients</h3>
@@ -18,26 +18,28 @@
             <input type="text" name="ingredient_amount[]" placeholder="Amount">
             <button type="button" onclick="addIngredient()">+</button>
         </div>
-    </div><br>
+    </div>
+    <br>
     <div class="form-row">
         <button type="submit">Save</button>
         <button type="button" onclick="window.location.href='{{ '/recipes/' }}'"> Back to the list of recipes</button>
-        </div><br>
+    </div>
+    <br>
 </form>
 
 <script>
-function addIngredient() {
-    const container = document.getElementById('ingredients');
+    function addIngredient() {
+        const container = document.getElementById('ingredients');
 
-    const row = document.createElement('div');
-    row.className = 'form-row ingredient-row';
+        const row = document.createElement('div');
+        row.className = 'form-row ingredient-row';
 
-    row.innerHTML = `
+        row.innerHTML = `
         <input type="text" name="ingredient_name[]" placeholder="Name">
         <input type="text" name="ingredient_amount[]" placeholder="Amount">
         <button type="button" onclick="this.parentElement.remove()">-</button>
     `;
 
-    container.appendChild(row);
-}
+        container.appendChild(row);
+    }
 </script>

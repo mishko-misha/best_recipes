@@ -3,25 +3,46 @@
     <meta charset="utf-8">
     <title>Register</title>
     <style>
-        form { max-width: 420px; margin: 24px auto; }
-        .form-row { display: flex; align-items: center; margin-bottom: 12px; }
-        .form-row label { width: 120px; margin-right: 12px; text-align: right; }
-        .form-row input { flex: 1; padding: 6px 8px; }
-        .form-row button { margin-left: 132px; padding: 8px 12px; }
+        form {
+            max-width: 420px;
+            margin: 24px auto;
+        }
+
+        .form-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .form-row label {
+            width: 120px;
+            margin-right: 12px;
+            text-align: right;
+        }
+
+        .form-row input {
+            flex: 1;
+            padding: 6px 8px;
+        }
+
+        .form-row button {
+            margin-left: 132px;
+            padding: 8px 12px;
+        }
     </style>
 </head>
 <body>
 {% if error %}
-<div style="color:red; text-align:center; margin-bottom:12px;"> {{ error }}</div>
+    <div style="color:red; text-align:center; margin-bottom:12px;"> {{ error }}</div>
 {% endif %}
 <form action="/login/" method="post">
     {% csrf_token %}
     {% for field in form %}
-    <div class="form-row">
-        {{ field.label_tag }}
-        {{ field }}
-        {{ field.errors }}
-    </div>
+        <div class="form-row">
+            {{ field.label_tag }}
+            {{ field }}
+            {{ field.errors }}
+        </div>
     {% endfor %}
     <div class="form-row">
         <button type="submit">Login</button>

@@ -5,7 +5,7 @@ from django.utils.decorators import method_decorator
 from django.views import View
 
 from common.forms import RecipeForm, RecipeIngredientsForm
-from recipes.models import Recipes, Ingredients, RecipeIngredients, Ratings
+from recipes.models import Recipes, Ingredients, RecipeIngredients, Ratings, Bookmark
 
 
 class RecipeListView(View):
@@ -15,7 +15,7 @@ class RecipeListView(View):
         # If send empty  request, don't get error
         query = request.GET.get('name', '')
 
-        recipes =  Recipes.objects.annotate(avg_rating=Avg('ratings__rating')).order_by('-id')[:10]
+        recipes = Recipes.objects.annotate(avg_rating=Avg('ratings__rating')).order_by('-id')[:10]
 
         if query:
             recipe_name = Recipes.objects.filter(title__icontains=query)
@@ -41,13 +41,33 @@ class RecipeDetailView(View):
     def get(self, request, recipe_id):
         list_form = RecipeForm()
         recipe = Recipes.objects.get(id=recipe_id)
-        return render(request, self.template_name, context={"form": list_form, "recipe": recipe})
+
+        #show button Add / Remove bookmark
+        is_bookmarked = False
+        if request.user.is_authenticated:
+            is_bookmarked = Bookmark.objects.filter(recipe=recipe, user=request.user).exists()
+
+        return render(request, self.template_name,
+                      context={"form": list_form, "recipe": recipe, "is_bookmarked": is_bookmarked})
 
     def post(self, request, recipe_id):
         recipe = Recipes.objects.get(id=recipe_id)
-        rating_value = int(request.POST.get('rating'))
 
-        Ratings.objects.update_or_create(recipe=recipe, user=request.user, defaults={"rating": rating_value})
+        # rating block
+        if 'rating' in request.POST:
+            rating_value = int(request.POST.get('rating'))
+            Ratings.objects.update_or_create(recipe=recipe, user=request.user, defaults={"rating": rating_value})
+
+        # bookmark block
+        action_bookmark = request.POST.get('action')
+
+        if action_bookmark == 'add':
+            Bookmark.objects.get_or_create(recipe=recipe, user=request.user)
+        elif action_bookmark == 'remove':
+            Bookmark.objects.filter(
+                recipe=recipe,
+                user=request.user
+            ).delete()
 
         return redirect('recipe_detail', recipe_id=recipe.id)
 

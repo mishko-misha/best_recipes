@@ -1,6 +1,6 @@
 <form method="post" action="/recipes/{{ recipe.id }}/delete/">
 {% csrf_token %}
-    <p>Are you sure you want to delete the recipe "{{ recipe.name }}"?</p>
+    <p>Are you sure you want to delete the recipe "{{ recipe.title }}"?</p>
     <button type="submit">Yes, delete</button>
-    <a href="/recipes/{{ recipe.id }}">No, go back</a>
+    <button type="button" onclick="window.location.href='/recipes/{{ recipe.id }}/delete/'">Delete</button>
 </form>

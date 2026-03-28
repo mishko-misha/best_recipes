@@ -7,4 +7,12 @@
     {% csrf_token %}
     <button type="submit">Logout</button>
 </form>
+<h2>Favorite recipes</h2>
+    {% for bookmark in bookmarks %}
+    <div>
+        {{ bookmark.recipe.title }}
+    </div>
+{% empty %}
+    <p>No favorite recipes yet</p>
+{% endfor %}
 </html>

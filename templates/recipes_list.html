@@ -6,29 +6,41 @@
     <title>Recipes</title>
 </head>
 <body>
-    <div class="container">
-        <h1>Recipes List</h1>
+<div class="container">
+    <h1>Recipes List</h1>
 
-        <form action="/recipes/" method="get">
-    <input type="text" name="name" placeholder="Search recipe">
-    <button type="submit">Search</button>
-</form><br>
-
-        {% if recipes %}
-            {% for recipe in recipes %}
-                <div class="recipe-card">
-                    {{ recipe.title}} (cooking time:{{ recipe.cooking_time }} minutes, author: {{ recipe.author.username }}) - rating: {{ recipe.avg_rating|floatformat:2|default:"No ratings yet" }} <a href="{% url 'recipe_detail' recipe.id%}">Details</a>
-                </div>
-            {% endfor %}
-        {% else %}
-            <div class="empty-message">
-                No recipes available yet.
-            </div>
-        {% endif %}
-    </div><br>
-    <form action="/recipes/create/" method="post">
-    {% csrf_token %}
-    <button type="submit">Create recipe</button>
+    <form action="/recipes/" method="get">
+        <input type="text" name="name" placeholder="Search recipe">
+        <button type="submit">Search</button>
     </form>
+    <br>
+
+    {% if recipes %}
+        {% for recipe in recipes %}
+            <div class="recipe-card">
+                {{ recipe.title }} (cooking time:{{ recipe.cooking_time }} minutes, author: {{ recipe.author.username }})
+                - rating: {{ recipe.avg_rating|floatformat:2|default:"No ratings yet" }} <a
+                    href="{% url 'recipe_detail' recipe.id %}">Details</a>
+            </div>
+        {% endfor %}
+    {% else %}
+        <div class="empty-message">
+            No recipes available yet.
+        </div>
+    {% endif %}
+</div>
+<br>
+{% if user.is_authenticated %}
+    <form action="/recipes/create/" method="post">
+        {% csrf_token %}
+        <button type="submit">Create recipe</button>
+    </form>
+{% else %}
+    <p>
+    <p>If you want to create recipes:
+        <button type="button" onclick="window.location.href='/login/'">Log in</button>
+    </p>
+    </p>
+{% endif %}
 </body>
 </html>
