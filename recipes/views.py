@@ -41,14 +41,22 @@ class RecipeDetailView(View):
     def get(self, request, recipe_id):
         list_form = RecipeForm()
         recipe = Recipes.objects.get(id=recipe_id)
+        rating = None
 
-        #show button Add / Remove bookmark
+        # show button Add / Remove bookmark
         is_bookmarked = False
         if request.user.is_authenticated:
             is_bookmarked = Bookmark.objects.filter(recipe=recipe, user=request.user).exists()
 
+        # show rating which set by user
+        if request.user.is_authenticated:
+            rating_object = Ratings.objects.filter(recipe=recipe, user=request.user).first()
+
+            if rating_object:
+                rating = rating_object.rating
+
         return render(request, self.template_name,
-                      context={"form": list_form, "recipe": recipe, "is_bookmarked": is_bookmarked})
+                      context={"form": list_form, "recipe": recipe, "is_bookmarked": is_bookmarked, "rating": rating})
 
     def post(self, request, recipe_id):
         recipe = Recipes.objects.get(id=recipe_id)

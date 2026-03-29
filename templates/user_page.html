@@ -2,13 +2,16 @@
 <h1>Profile</h1>
 <p> Name: {{ user.first_name }}</p>
 <p> Last name: {{ user.last_name }}</p>
-<p>Email: {{user.email}}</p>
+<p>Email: {{ user.email }}</p>
+<button type="button" onclick="window.location.href='/recipes/'">Go to recipes</button>
+<br>
+<br>
 <form action="/logout/" method="post">
     {% csrf_token %}
     <button type="submit">Logout</button>
 </form>
 <h2>Favorite recipes</h2>
-    {% for bookmark in bookmarks %}
+{% for bookmark in bookmarks %}
     <div>
         {{ bookmark.recipe.title }}
     </div>

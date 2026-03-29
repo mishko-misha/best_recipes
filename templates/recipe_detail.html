@@ -18,25 +18,33 @@
         {% endfor %}
     </ul>
     {% if user.is_authenticated %}
+
         <form method="post">
             {% csrf_token %}
 
             <select name="rating">
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
+                <option value="1" {% if rating == 1 %}selected{% endif %}>1</option>
+                <option value="2" {% if rating == 2 %}selected{% endif %}>2</option>
+                <option value="3" {% if rating == 3 %}selected{% endif %}>3</option>
+                <option value="4" {% if rating == 4 %}selected{% endif %}>4</option>
+                <option value="5" {% if rating == 5 %}selected{% endif %}>5</option>
             </select>
 
             <button type="submit">Leave rating</button>
-
-            <button type="button" onclick="window.location.href='/recipes/{{ recipe.id }}/update/'">Update</button>
-            <button type="button" onclick="window.location.href='/recipes/{{ recipe.id }}/delete/'">Delete</button>
         </form><br>
+
+        <button type="button"
+                onclick="window.location.href='/recipes/{{ recipe.id }}/update/'">
+            Update
+        </button><br><br>
+
+        <button type="button"
+                onclick="window.location.href='/recipes/{{ recipe.id }}/delete/'">
+            Delete
+        </button><br><br>
+
         <form method="post">
             {% csrf_token %}
-
             {% if is_bookmarked %}
                 <button type="submit" name="action" value="remove">
                     Remove from favorites
@@ -47,13 +55,28 @@
                 </button>
             {% endif %}
         </form><br>
+
+        <button type="button"
+                onclick="window.location.href='/user/{{ user.id }}'">
+            User Profile
+        </button><br><br>
+
+        <form action="/logout/" method="post">
+            {% csrf_token %}
+            <button type="submit">Logout</button>
+        </form><br>
+
     {% else %}
-        <p>
-        <p>If you want to leave a rating / update / delete recipe / bookmark:
-            <button type="button" onclick="window.location.href='/login/'">Log in</button>
-        </p>
-        </p>
+
+        <p>If you want to interact with the recipe:</p>
+        <button type="button" onclick="window.location.href='/login/'">
+            Log in
+        </button><br><br>
+
     {% endif %}
-    <button type="button" onclick="window.location.href='/recipes/'">Back to list</button>
+
+    <button type="button" onclick="window.location.href='/recipes/'">
+        Back to list
+    </button>
 </div>
 </body>

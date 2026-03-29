@@ -1,5 +1,3 @@
-from urllib import request
-
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -53,7 +51,7 @@ class LogoutView(View):
 
     def post(self, request):
         auth.logout(request)
-        return redirect("login")
+        return redirect("/recipes/")
 
 
 @method_decorator(login_required, name='dispatch')

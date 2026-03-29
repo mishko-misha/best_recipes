@@ -31,16 +31,28 @@
 </div>
 <br>
 {% if user.is_authenticated %}
+
     <form action="/recipes/create/" method="post">
         {% csrf_token %}
         <button type="submit">Create recipe</button>
+    </form><br>
+
+    <button type="button" onclick="window.location.href='/user/{{ user.id }}'">
+        User Profile
+    </button><br><br>
+
+    <form action="/logout/" method="post">
+        {% csrf_token %}
+        <button type="submit">Logout</button>
     </form>
+
 {% else %}
-    <p>
-    <p>If you want to create recipes:
-        <button type="button" onclick="window.location.href='/login/'">Log in</button>
-    </p>
-    </p>
+
+    <p>If you want to create recipes:</p>
+    <button type="button" onclick="window.location.href='/login/'">
+        Log in
+    </button>
+
 {% endif %}
 </body>
 </html>
