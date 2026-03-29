@@ -17,11 +17,12 @@
 
     {% if recipes %}
         {% for recipe in recipes %}
-            <div class="recipe-card">
-                {{ recipe.title }} (cooking time:{{ recipe.cooking_time }} minutes, author: {{ recipe.author.username }})
-                - rating: {{ recipe.avg_rating|floatformat:2|default:"No ratings yet" }} <a
-                    href="{% url 'recipe_detail' recipe.id %}">Details</a>
-            </div>
+            <ul class="recipe-card">
+                <li> {{ recipe.title }} (cooking time:{{ recipe.cooking_time }} minutes,
+                    author: {{ recipe.author.username }})
+                    - rating: {{ recipe.avg_rating|floatformat:2|default:"No ratings yet" }} <a
+                            href="{% url 'recipe_detail' recipe.id %}">Details</a></li>
+            </ul>
         {% endfor %}
     {% else %}
         <div class="empty-message">
